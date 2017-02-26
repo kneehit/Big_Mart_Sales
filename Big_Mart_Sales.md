@@ -355,13 +355,15 @@ Thus we can see that our model has greatly improved and about 75% of variations 
 
 ### Predicting the sales for test dataset
 
-Now we can use our model to predict values of sales for test dataset.
+Now we can use our model to predict values of sales for test dataset.  
+Since we used log of Item_Outlet_Sales, we will use exponential function of the prediction. 
 
 ``` r
 prediction <- predict(lm2, newdata = new_test)
 
-sub_file <- data.frame(Item_Identifier = test$Item_Identifier, Outlet_Identifier = test$Outlet_Identifier,       
+sub_file <- data.frame(Item_Identifier = new_test$Item_Identifier, Outlet_Identifier = new_test$Outlet_Identifier,       
                        Item_Outlet_Sales = exp(prediction))
 
 write.csv(sub_file, "Predicted_Test.csv")
 ```
+Model performance was evaluated on the basis of prediction of the sales for the test data and the calculated root mean square error was found out to be 1209.
