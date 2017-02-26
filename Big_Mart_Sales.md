@@ -1,7 +1,7 @@
 Big Mart Sales
 ================
-Nihit R. Save
-20th January 2017
+Nihit R. Save  
+20th January 2017  
 
 Dataset: <https://datahack.analyticsvidhya.com/contest/practice-problem-big-mart-sales-iii/>
 
