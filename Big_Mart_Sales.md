@@ -150,7 +150,7 @@ Conclusion: Fruits,Vegetables and Snacks are sold most in these outlets while sa
 ggplot(data = train,aes(x = Outlet_Establishment_Year,y = Item_Outlet_Sales)) + geom_histogram(stat = "identity")  + xlab("Year Of Establishment") + ylab("Sales") 
 ```
 
-[asd](4a51132236a11f09.jpg)
+[](/4a51132236a11f09.jpg)
 
 On the first glance it seems that the sales of outlet established in 1985 has most sales. But on closer observation we can notice that there are only 9 bars and we have 10 distinct outlets. This must mean two outlets launched in same year. Let us see which are those outlets.
 
