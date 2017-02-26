@@ -134,7 +134,7 @@ library(ggplot2)
  ggplot(data = train,aes(x = Outlet_Identifier,y = Item_Outlet_Sales)) + geom_boxplot() +scale_y_continuous(breaks = seq(0,15000,2000)) + theme(axis.text.x = element_text(angle = 70,vjust = 0.5)) +xlab("Outlet Identifier") + ylab("Sale of Item in Outlet") +ggtitle("Item sales according to Outlets")
 ```
 
-![](Big_Mart_Sales_files/figure-markdown_github/unnamed-chunk-8-1.png)
+https://github.com/kneehit/Big_Mart_Sales/blob/master/4a51132236a11f09
 
 Conclusion: As can be seen from above box plot, Outlet 27 contributes to most sales while Outlet 10 and Outlet 19 contribute the least.
 
