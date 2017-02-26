@@ -142,7 +142,7 @@ Conclusion: As can be seen from above box plot, Outlet 27 contributes to most sa
 ggplot(data = train,aes(x = Item_Type,y = Item_Outlet_Sales)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 70,vjust = 0.5)) +xlab("Item Type") +ylab("Sales")
 ```
 
-![](Big_Mart_Sales_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](Big_Mart_Sales_files/figure-markdown_github/4a51132236a11f09.jpg)
 
 Conclusion: Fruits,Vegetables and Snacks are sold most in these outlets while sale of seafood and breakfast items is very less
 
@@ -150,7 +150,7 @@ Conclusion: Fruits,Vegetables and Snacks are sold most in these outlets while sa
 ggplot(data = train,aes(x = Outlet_Establishment_Year,y = Item_Outlet_Sales)) + geom_histogram(stat = "identity")  + xlab("Year Of Establishment") + ylab("Sales") 
 ```
 
-![](Big_Mart_Sales_files/figure-markdown_github/unnamed-chunk-10-1.png)
+[asd](4a51132236a11f09.jpg)
 
 On the first glance it seems that the sales of outlet established in 1985 has most sales. But on closer observation we can notice that there are only 9 bars and we have 10 distinct outlets. This must mean two outlets launched in same year. Let us see which are those outlets.
 
