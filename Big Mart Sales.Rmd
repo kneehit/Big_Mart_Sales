@@ -1,0 +1,298 @@
+---
+title: "Big Mart Sales"
+author: "Nihit R. Save"
+date: "20th January 2017"
+output: github_document
+---
+Dataset: <https://datahack.analyticsvidhya.com/contest/practice-problem-big-mart-sales-iii/>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Exploration
+
+
+
+Loading Data from work directory.
+```{r }
+train <- read.csv("Train.csv")
+test <- read.csv("Test.csv")
+```
+
+
+
+Checking variables and their data types in training set.
+``` {r}
+str(train)
+```
+
+
+
+
+Checking for missing values
+``` {r}
+table(is.na(train))
+```
+There are 1463 missing values in the train data set.
+Lets see which variables have missing values.
+
+```{r}
+colSums(is.na(train))
+```
+
+Observing the distribution of variables in dataset.
+```{r}
+summary(train)
+```
+
+Important Observations:
+The Item fat content variables seems to have mismatched levels.
+Also Outlet Size has a level with no value.
+
+
+``` {r}
+dim(train)
+dim(test)
+```
+Test dataset has 1 less column which is that of value to predicted.
+
+Adding Item Outlet Sales column in test dataset.
+```{r}
+test$Item_Outlet_Sales <- NA
+```
+
+# Data Exploration using Graphs
+
+```{r}
+library(ggplot2)
+
+ ggplot(data = train,aes(x = Outlet_Identifier,y = Item_Outlet_Sales)) + geom_boxplot() +scale_y_continuous(breaks = seq(0,15000,2000)) + theme(axis.text.x = element_text(angle = 70,vjust = 0.5)) +xlab("Outlet Identifier") + ylab("Sale of Item in Outlet") +ggtitle("Item sales according to Outlets")
+```
+
+Conclusion: As can be seen from above box plot, Outlet 27 contributes to most sales while Outlet 10 and Outlet 19 contribute the least.
+
+
+
+```{r}
+ggplot(data = train,aes(x = Item_Type,y = Item_Outlet_Sales)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 70,vjust = 0.5)) +xlab("Item Type") +ylab("Sales")
+```
+
+Conclusion: Fruits,Vegetables and Snacks are sold most in these outlets while sale of seafood and breakfast items is very less
+
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(data = train,aes(x = Outlet_Establishment_Year,y = Item_Outlet_Sales)) + geom_histogram(stat = "identity")  + xlab("Year Of Establishment") + ylab("Sales") 
+```
+
+On the first glance it seems that the sales of outlet established in 1985 has most sales.
+But on closer observation we can notice that there are only 9 bars and we have 10 distinct outlets.
+This must mean two outlets launched in same year.
+Let us see which are those outlets.
+
+```{r, message=FALSE, warning=FALSE}
+library(plyr)
+library(dplyr)
+train %>% group_by(Outlet_Identifier,Outlet_Establishment_Year) %>% summarise(TotalSales = sum(Item_Outlet_Sales)) %>% arrange(Outlet_Establishment_Year)
+```
+As it can be seen from above table, Outlet 19 and Outlet 27 were both established in 1985.
+Despite this,the sales of Outlet 27 is the most.
+On the other hand outlet 19 which also launched in 1985 has least sales.
+
+Conclusion: Year of establishment does not have significant impact on sales
+
+
+```{r}
+ ggplot(train,aes(x = Outlet_Type,y = Item_Outlet_Sales)) + geom_boxplot() + xlab("Outlet Type") + ylab("Item Sales")
+
+```
+
+We can conclude that customers tend to buy at supermarkets rather than at grocery store.
+This could be due to the fact that they can buy other items besides foods at supermarket.
+
+Checking distribution of predictor variables
+```{r, message=FALSE, warning=FALSE}
+ggplot(train,aes(x = Item_Outlet_Sales)) + geom_histogram(colour = "Black",fill = "Green")
+```
+
+Our predictor variable is heavily skewed and would require transformation in later stages.
+
+
+
+# Data Manipulation
+
+Combining the datasets for manipulating data.
+
+```{r}
+combined <- rbind(train,test)
+str(combined)
+```
+
+###  Imputation of missing values in Item Weight
+As we noted earlier there were 1463 missing values in Item Weight.
+On inspecting the dataset we can clearly see that items with same item identifier have equal weights.
+That makes sense as same items even though sold in different outlet would have equal weights.
+Lets impute the missing values in Item Weight.
+
+```{r}
+
+combined <- ddply(combined,~Item_Identifier,transform,Item_Weight = ifelse(is.na(Item_Weight), median(Item_Weight,na.rm = TRUE),Item_Weight))
+
+table(is.na(combined$Item_Weight))
+
+```
+
+
+
+
+### Revalue of empty level in Outlet Size
+
+Outlet size has a level which is empty.
+We categorize it as Other.
+```{r}
+levels(combined$Outlet_Size)[1] <- "Other"
+```
+
+### Correction of mismatched levels in Fat Content
+
+Fat content has similar levels for same fat content.
+We need to categorize them into Low Fat and Regular.
+```{r}
+
+combined$Item_Fat_Content <- mapvalues(combined$Item_Fat_Content,from = c("LF","reg"),to = c("Low Fat","Regular"))
+combined$Item_Fat_Content <- mapvalues(combined$Item_Fat_Content,from = c("low fat"),to = c("Low Fat"))
+
+
+```
+
+
+### Imputation of NAs Item Visibility
+
+Item visibility is 0 for some of the items.
+If the item is present in an outlet it has to be visible.
+Therefore we will consider the items with 0 visbility to have missing values and replace them with median of item visibility of same item.
+
+```{r}
+combined$Item_Visibility[combined$Item_Visibility == 0] <- NA
+
+combined <- ddply(combined,~Item_Identifier,transform,Item_Visibility = 
+                    ifelse(is.na(Item_Visibility),median(Item_Visibility,TRUE),Item_Visibility))
+```
+
+### Subdiving item into Item Category
+
+On close observation of Item Identifier it seems all items begin with DR,FD or NC.
+Checking these items under Item Type the must mean Drinks,Food and Non Consumables respectively 
+Lets make a new variable: Item Category
+
+```{r}
+q <- substr(combined$Item_Identifier,1,2)
+q <- gsub("DR","Drinks",q) 
+q <- gsub("FD","Food",q)
+q <- gsub("NC","Non Consumables",q)
+
+combined$Item_Category <- q
+combined$Item_Category <- factor(combined$Item_Category,levels = c("Drinks","Food","Non Consumables"))
+```
+
+
+### Addition of a level to Fat Content
+
+As we categorized items into different categories,we noticed that some items were not consumables.
+Hence they should not have fat content either low or regular.
+Replacing fat content of non consumable items by Non Edible
+
+```{r}
+combined$Item_Fat_Content <- as.character(combined$Item_Fat_Content)
+
+combined$Item_Fat_Content <- ifelse(combined$Item_Category == "Non Consumables","Non Edible",combined$Item_Fat_Content)
+
+combined$Item_Fat_Content <- as.factor(combined$Item_Fat_Content)
+
+
+```
+
+
+Lets see how fat content affects sales.
+
+```{r, message=FALSE, warning=FALSE}
+
+ggplot(data = combined,aes(x = Item_Fat_Content,y = Item_Outlet_Sales)) + geom_histogram(stat = "identity") + 
+  
+  xlab("Fat Content") + ylab("Item Outlet Sale")
+
+```
+
+Compared to regular fat content, Items with low fat content had higher sales. 
+It seems that customers prefer low fat items. 
+
+
+### New Variable: Outlet Age
+
+This data was collected in 2013 and therefore we can find how long the outlet has been running if we subtract establishment year from 2013
+
+```{r}
+
+combined$Outlet_Age <- 2013 - combined$Outlet_Establishment_Year
+
+combined <- select(combined,-c(Outlet_Establishment_Year))
+```
+
+
+
+### One Hot Encoding of Categorical Variabales
+
+We will add separate columns for each level of categorical variable
+
+```{r, message=FALSE, warning=FALSE}
+library(dummies)
+combined <- dummy.data.frame(combined,names = c("Item_Fat_Content","Item_Type","Outlet_Size","Outlet_Location_Type","Outlet_Type"))
+```
+
+
+### Splitting the dataset
+
+```{r}
+new_train <- combined[!is.na(combined$Item_Outlet_Sales),]
+new_test <- combined[is.na(combined$Item_Outlet_Sales),]
+```
+
+
+# Using Linear Regression Model
+
+```{r}
+lm1 <- lm(Item_Outlet_Sales ~ .,data = new_train)
+summary(lm1)$adj.r.squared
+```
+We get R^2 of 0.5628. 
+This mean only 56% of variations can be explained by the data.
+
+
+### Linear Model of log transformed data
+
+One assumption of Linear Regression is that predictor variable is normalized.
+But our predictor variable Item Outlet Sales is heavily skewed to one side.
+Therefore we shall use log transform of sales in formula for linear regression.
+
+
+```{r}
+lm2 <- lm(log(Item_Outlet_Sales) ~ .,data = new_train)
+summary(lm2)$adj.r.squared
+```
+
+Thus we can see that our model has greatly improved and about 75% of variations in data can be explained.
+
+### Predicting the sales for test dataset  
+
+Now we can use our model to predict values of sales for test dataset.
+
+```{r, message=FALSE, warning=FALSE}
+prediction <- predict(lm2, newdata = new_test)
+
+sub_file <- data.frame(Item_Identifier = test$Item_Identifier, Outlet_Identifier = test$Outlet_Identifier,       
+                       Item_Outlet_Sales = exp(prediction))
+
+write.csv(sub_file, "Predicted_Test.csv")
+```
+
