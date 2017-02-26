@@ -2,6 +2,7 @@
 Given sales data for 1559 products across 10 stores of the Big Mart chain in various cities the task is to build a model to predict sales for each particular product in different stores.
 
 Dataset: https://datahack.analyticsvidhya.com/contest/practice-problem-big-mart-sales-iii/
+My Model: ![](Big_Mart_Sales.md)
 
 The train and test data, which can be found at the link given above, contain the following variables:
 
@@ -21,4 +22,4 @@ Outlet_Type |	Grocery store or some sort of supermarket
 Item_Outlet_Sales	| Sales of product in particular store. This is the outcome variable to be predicted.
 
 
-My solution: [a relative link](.md)
+
