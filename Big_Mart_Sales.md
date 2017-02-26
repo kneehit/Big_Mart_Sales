@@ -142,7 +142,7 @@ Conclusion: As can be seen from above box plot, Outlet 27 contributes to most sa
 ggplot(data = train,aes(x = Item_Type,y = Item_Outlet_Sales)) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 70,vjust = 0.5)) +xlab("Item Type") +ylab("Sales")
 ```
 
-![](Big_Mart_Sales_files/figure-markdown_github/4a51132236a11f09.jpg)
+![asd](https://github.com/kneehit/Big_Mart_Sales/raw/master/4a51132236a11f09.jpg)
 
 Conclusion: Fruits,Vegetables and Snacks are sold most in these outlets while sale of seafood and breakfast items is very less
 
