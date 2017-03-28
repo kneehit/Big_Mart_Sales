@@ -378,7 +378,7 @@ summary(lm1)
     ## Multiple R-squared:  0.5637, Adjusted R-squared:  0.5622 
     ## F-statistic: 378.4 on 29 and 8493 DF,  p-value: < 2.2e-16
 
-We get R^2 of 0.5628. This mean only 56% of variations can be explained by the data.
+We get adjusted R-squared of 0.5628. This mean only 56% of variations can be explained by the data.
 
 ### Linear Model of log transformed data
 
@@ -440,7 +440,7 @@ summary(lm2)
     ## Multiple R-squared:  0.7214, Adjusted R-squared:  0.7204 
     ## F-statistic: 758.3 on 29 and 8493 DF,  p-value: < 2.2e-16
 
-Thus we can see that our model has greatly improved and about 75% of variations in data can be explained.
+Thus we can see that our model has greatly improved and about 72% of variations in data can be explained.
 Also we get NAs in ItemType Others and Item_Category Non Consumables row. This is because there is strong correlation between them due to the fact that we have categorised Non Consumables as Others in Item Type. 
 
 
