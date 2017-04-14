@@ -1,5 +1,5 @@
-Big Mart Sales
-================
+Big Mart Sales Prediction
+=========================
 Author: Nihit R. Save
 
  Date: 20th January 2017
