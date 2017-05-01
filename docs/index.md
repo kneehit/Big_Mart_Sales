@@ -1,8 +1,8 @@
 Big Mart Sales Prediction
 =========================
-Author: Nihit R. Save
+**Author:-** Nihit R. Save
 
- Date: 20th January 2017
+ **Date:-** 20th January 2017
 
 Dataset: <https://datahack.analyticsvidhya.com/contest/practice-problem-big-mart-sales-iii/>
 
